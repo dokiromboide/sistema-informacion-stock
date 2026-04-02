@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  cockroachdb:
+    image: cockroachdb/cockroach:v23.2.0
+    container_name: stock_cockroachdb
+    command: start-single-node --insecure
+    ports:
+      - "26257:26257"   # Puerto de la base de datos
+      - "8081:8080"     # Interfaz web de administracion de CockroachDB
+    volumes:
+      - cockroach_datos:/cockroach/cockroach-data
+    environment:
+      - COCKROACH_DATABASE=stock_db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health?ready=1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  cockroach_datos:
+    driver: local
